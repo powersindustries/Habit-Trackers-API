@@ -62,13 +62,22 @@ public class HabitService {
         return outHabit;
     }
 
-    public Boolean addNewHabit(String id, String name, String comments, int start) {
+    public Habit addNewHabit(String id, String name, String comments, int start) {
+
+        Habit newHabit = new Habit();
+
         try {
+
+            newHabit.id = id.hashCode();
+            newHabit.name = name;
+            newHabit.comments = comments;
+            newHabit.start = start;
+
             String queryString = "INSERT INTO habits VALUES(";
-            queryString += id.hashCode() + ", \"";
-            queryString += name + "\", \"";
-            queryString += comments + "\", ";
-            queryString += start + ");";
+            queryString += newHabit.id + ", \"";
+            queryString += newHabit.name + "\", \"";
+            queryString += newHabit.comments + "\", ";
+            queryString += newHabit.start + ");";
 
             sqlService.getStatement().executeUpdate(queryString);
 
@@ -76,7 +85,7 @@ public class HabitService {
             throw new RuntimeException(ex);
         }
 
-        return true;
+        return newHabit;
     }
 
     public Boolean deleteHabit(String id) {

@@ -4,13 +4,16 @@ import com.habittrackers.model.Habit;
 import com.habittrackers.service.HabitService;
 import com.habittrackers.service.SqlService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.swing.text.html.Option;
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+@RequestMapping(value = "/habits")
 public class HabitController {
 
     private HabitService habitService;
@@ -20,38 +23,86 @@ public class HabitController {
         this.habitService = habitService;
     }
 
-    @GetMapping("habit/get/all")
+
+    // --------------------------------------------------------------
+    // Returns an array of Habit objects.
+    // --------------------------------------------------------------
+    @GetMapping("/habits")
+    @ResponseStatus(HttpStatus.OK)
     public List<Habit> getAllHabits() {
         List<Habit> outHabit = habitService.getAllHabits();
-        if (outHabit.isEmpty()){
+        if (outHabit.isEmpty()) {
             return null;
         }
 
         return outHabit;
     }
 
-    @GetMapping("habit/get")
+
+    // --------------------------------------------------------------
+    // Returns a Habit objects from a habit id.
+    // --------------------------------------------------------------
+    @GetMapping("/")
+    @ResponseStatus(HttpStatus.OK)
     public Habit getHabitById(@RequestParam String id) {
         Habit outHabit = habitService.getHabitById(id);
-        if (outHabit.IsEmpty()){
+        if (outHabit.IsEmpty()) {
             return null;
         }
 
         return outHabit;
     }
 
-    @PostMapping("habit/add")
-    public Boolean addNewHabit(@RequestParam String id,
-                               @RequestParam String name,
-                               @RequestParam String comments,
-                               @RequestParam int start) {
 
-        return habitService.addNewHabit(id, name, comments, start);
+    // --------------------------------------------------------------
+    // Adds a new habit entry to the SQL database.
+    // --------------------------------------------------------------
+    @PostMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Object> addNewHabit(
+            @RequestParam String id,
+            @RequestParam String name,
+            @RequestParam String comments,
+            @RequestParam int start) {
+
+        Habit newHabit = habitService.addNewHabit(id, name, comments, start);
+
+        if (newHabit.IsEmpty()) {
+            String responseBody = "Failed to create the new habit with ";
+            responseBody += "id: " + id + ", ";
+            responseBody += "name: " + name + ", ";
+            responseBody += "comments: " + comments + ", ";
+            responseBody += "start: " + start + ".";
+
+            return ResponseEntity.badRequest().body(responseBody);
+        } else {
+
+            URI uriLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(id)
+                    .toUri();
+
+            return ResponseEntity.created(uriLocation).body(newHabit);
+        }
     }
 
-    @DeleteMapping("habit/delete")
-    public Boolean deleteHabit(@RequestParam String id) {
-       return habitService.deleteHabit(id);
+
+    // --------------------------------------------------------------
+    // Removes a habit entry from the SQL database based on habit id.
+    // --------------------------------------------------------------
+    @DeleteMapping("/")
+    public ResponseEntity<Object> deleteHabit(@RequestParam String id) {
+
+        URI uriLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+
+        if (habitService.deleteHabit(id)) {
+            return ResponseEntity.ok("Delete Succeeded.");
+        } else {
+            return ResponseEntity.badRequest().body("Failed to delete habit with the id: " + id + ".");
+        }
     }
 
 }
