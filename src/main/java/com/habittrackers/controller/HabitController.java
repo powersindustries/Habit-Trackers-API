@@ -25,32 +25,26 @@ public class HabitController {
 
 
     // --------------------------------------------------------------
-    // Returns an array of Habit objects.
-    // --------------------------------------------------------------
-    @GetMapping("/habits")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Habit> getAllHabits() {
-        List<Habit> outHabit = habitService.getAllHabits();
-        if (outHabit.isEmpty()) {
-            return null;
-        }
-
-        return outHabit;
-    }
-
-
-    // --------------------------------------------------------------
     // Returns a Habit objects from a habit id.
     // --------------------------------------------------------------
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    public Habit getHabitById(@RequestParam String id) {
+    public ResponseEntity<Object> getHabitById(@RequestParam String id) {
         Habit outHabit = habitService.getHabitById(id);
         if (outHabit.IsEmpty()) {
-            return null;
+            return ResponseEntity
+                    .status(404)
+                    .body("Failed to find habit with id ( " + id + " ).");
         }
 
-        return outHabit;
+        URI uriLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+
+        return ResponseEntity
+                .created(uriLocation)
+                .body(outHabit);
     }
 
 
@@ -74,7 +68,9 @@ public class HabitController {
             responseBody += "comments: " + comments + ", ";
             responseBody += "start: " + start + ".";
 
-            return ResponseEntity.badRequest().body(responseBody);
+            return ResponseEntity
+                    .badRequest()
+                    .body(responseBody);
         } else {
 
             URI uriLocation = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -82,7 +78,9 @@ public class HabitController {
                     .buildAndExpand(id)
                     .toUri();
 
-            return ResponseEntity.created(uriLocation).body(newHabit);
+            return ResponseEntity
+                    .created(uriLocation)
+                    .body(newHabit);
         }
     }
 
@@ -99,9 +97,12 @@ public class HabitController {
                 .toUri();
 
         if (habitService.deleteHabit(id)) {
-            return ResponseEntity.ok("Delete Succeeded.");
+            return ResponseEntity
+                    .ok("Delete Succeeded.");
         } else {
-            return ResponseEntity.badRequest().body("Failed to delete habit with the id: " + id + ".");
+            return ResponseEntity
+                    .badRequest()
+                    .body("Failed to delete habit with the id: " + id + ".");
         }
     }
 
