@@ -91,11 +91,6 @@ public class HabitController {
     @DeleteMapping("/")
     public ResponseEntity<Object> deleteHabit(@RequestParam String id) {
 
-        URI uriLocation = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
-                .toUri();
-
         if (habitService.deleteHabit(id)) {
             return ResponseEntity
                     .ok("Delete Succeeded.");
@@ -106,4 +101,20 @@ public class HabitController {
         }
     }
 
+
+    // --------------------------------------------------------------
+    // Resets the habit's start time to the current unix time.
+    // --------------------------------------------------------------
+    @PutMapping("/")
+    public ResponseEntity<Object> putResetHabitById(@RequestParam String id) {
+
+        if (habitService.resetHabitStartById(id)) {
+            return ResponseEntity
+                    .ok("Reset Succeeded.");
+        } else {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Failed to reset habit with the id: " + id + ".");
+        }
+    }
 }

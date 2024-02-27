@@ -15,11 +15,17 @@ import java.util.Optional;
 public class HabitService {
     private SqlService sqlService;
 
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
     @Autowired
     public HabitService(SqlService sqlService) {
         this.sqlService = sqlService;
     }
 
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
     public List<Habit> getAllHabits() {
         List<Habit> outHabits = new ArrayList<Habit>();
 
@@ -43,6 +49,9 @@ public class HabitService {
         return outHabits;
     }
 
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
     public Habit getHabitById(String id) {
         Habit outHabit = new Habit();
         ResultSet resultSet = null;
@@ -62,6 +71,9 @@ public class HabitService {
         return outHabit;
     }
 
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
     public Habit addNewHabit(String id, String name, String comments, int start) {
 
         Habit newHabit = new Habit();
@@ -88,9 +100,29 @@ public class HabitService {
         return newHabit;
     }
 
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
     public Boolean deleteHabit(String id) {
         try {
             String queryString = "DELETE FROM habits WHERE id = " + id.hashCode();
+            sqlService.getStatement().executeUpdate(queryString);
+
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        return true;
+    }
+
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
+    public Boolean resetHabitStartById(String id) {
+        try {
+            String queryString = "UPDATE habits SET start = " + Instant.now().getEpochSecond();
+            queryString += " WHERE id = " + id.hashCode();
+
             sqlService.getStatement().executeUpdate(queryString);
 
         } catch (SQLException ex) {
