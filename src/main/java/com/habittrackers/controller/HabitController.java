@@ -36,7 +36,7 @@ public class HabitController {
         if (outHabit.IsEmpty()) {
             return ResponseEntity
                     .status(404)
-                    .body("Failed to find habit with id ( " + id + " ).");
+                    .body(String.format("Failed to find habit with id (%s)", id));
         }
 
         URI uriLocation = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -63,11 +63,12 @@ public class HabitController {
         Habit newHabit = habitService.addNewHabit(id, name, comments, start);
 
         if (newHabit.IsEmpty()) {
-            String responseBody = "Failed to create the new habit with ";
-            responseBody += "id: " + id + ", ";
-            responseBody += "name: " + name + ", ";
-            responseBody += "comments: " + comments + ", ";
-            responseBody += "start: " + start + ".";
+            String responseBody = String.format(
+                    "Failed to create the new habit with id: %s, name: %s, comments: %s, start %s",
+                    id,
+                    name,
+                    comments,
+                    start);
 
             return ResponseEntity
                     .badRequest()
