@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/habits")
@@ -18,6 +17,9 @@ public class HabitController {
 
     private HabitService habitService;
 
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
     @Autowired
     public HabitController(HabitService habitService, SqlService sqlService) {
         this.habitService = habitService;
@@ -58,7 +60,6 @@ public class HabitController {
             @RequestParam String name,
             @RequestParam String comments,
             @RequestParam int start) {
-
         Habit newHabit = habitService.addNewHabit(id, name, comments, start);
 
         if (newHabit.IsEmpty()) {
@@ -72,7 +73,6 @@ public class HabitController {
                     .badRequest()
                     .body(responseBody);
         } else {
-
             URI uriLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
                     .buildAndExpand(id)
@@ -90,7 +90,6 @@ public class HabitController {
     // --------------------------------------------------------------
     @DeleteMapping("/")
     public ResponseEntity<Object> deleteHabit(@RequestParam String id) {
-
         if (habitService.deleteHabit(id)) {
             return ResponseEntity
                     .ok("Delete Succeeded.");
@@ -107,7 +106,6 @@ public class HabitController {
     // --------------------------------------------------------------
     @PutMapping("/")
     public ResponseEntity<Object> putResetHabitById(@RequestParam String id) {
-
         if (habitService.resetHabitStartById(id)) {
             return ResponseEntity
                     .ok("Reset Succeeded.");
