@@ -116,4 +116,24 @@ public class HabitController {
                     .body("Failed to reset habit with the id: " + id + ".");
         }
     }
+
+
+    // --------------------------------------------------------------
+    // Edit the habit's name, comments, and start time by ID.
+    // --------------------------------------------------------------
+    @PutMapping("/")
+    public ResponseEntity<Object> putEditHabitById(
+            @RequestParam String id,
+            @RequestParam String name,
+            @RequestParam String comments,
+            @RequestParam int start) {
+        if (habitService.editHabitStartById(id, name, comments, start)) {
+            return ResponseEntity
+                    .ok("Reset Succeeded.");
+        } else {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Failed to reset habit with the id: " + id + ".");
+        }
+    }
 }

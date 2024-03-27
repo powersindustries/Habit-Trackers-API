@@ -97,4 +97,23 @@ public class HabitService {
 
         return true;
     }
+
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
+    public Boolean editHabitStartById(String id, String name, String comments, int start) {
+        String queryString = String.format(
+                "UPDATE habits SET name = '%s', comments = '%s', start = %s WHERE id = %s;",
+                name,
+                comments,
+                start,
+                id.hashCode());
+        try {
+            sqlService.getStatement().executeUpdate(queryString);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        return true;
+    }
 }

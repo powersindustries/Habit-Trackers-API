@@ -29,16 +29,16 @@ public class Habit {
 
 
 ### Current Endpoints
-- Get existing Habit by ID
-- Add new Habit
-- Delete existing habit
+- Get existing Habit by ID.
+- Add new Habit.
+- Delete existing habit.
 - Restart an existing habit's start time.
+- Edit an existing habit's information (Name, Comments, Start Date).
 
 
 ### Future Features
 Items will be crossed off the list as they are implemented.
 - Implement the concept of a "Cheat" day allowing for specific days of the week to not be counted towards progress.
-- Edit an existing habit's information (Name, Comments, Start Date).
 
 
 ### About
