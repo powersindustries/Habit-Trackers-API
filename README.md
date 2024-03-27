@@ -36,11 +36,6 @@ public class Habit {
 - Edit an existing habit's information (Name, Comments, Start Date).
 
 
-### Future Features
-Items will be crossed off the list as they are implemented.
-- Implement the concept of a "Cheat" day allowing for specific days of the week to not be counted towards progress.
-
-
 ### About
 The Habit Trackers API was written in Java with the Spring Boot framework. This project is under the MIT license.
 
