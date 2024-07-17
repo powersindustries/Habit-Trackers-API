@@ -1,4 +1,4 @@
-package com.habittrackers.model;
+package com.habittrackers.model.habit;
 
 public class Habit {
     public int id;

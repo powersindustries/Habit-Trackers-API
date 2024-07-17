@@ -1,6 +1,8 @@
 package com.habittrackers.controller;
 
-import com.habittrackers.model.Habit;
+import com.habittrackers.model.ErrorResponse;
+import com.habittrackers.model.SuccessResponse;
+import com.habittrackers.model.habit.Habit;
 import com.habittrackers.service.HabitService;
 import com.habittrackers.service.SqlService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping(value = "/habits")
+@RequestMapping(value = "v1/habits")
 public class HabitController {
 
     private HabitService habitService;
@@ -34,19 +36,23 @@ public class HabitController {
     public ResponseEntity<Object> getHabitById(@RequestParam String id) {
         Habit outHabit = habitService.getHabitById(id);
         if (outHabit.IsEmpty()) {
-            return ResponseEntity
-                    .status(404)
-                    .body(String.format("Failed to find habit with id (%s)", id));
+            ErrorResponse.ErrorDetail errorDetail = new ErrorResponse.ErrorDetail();
+            errorDetail.setCode(404);
+            errorDetail.setMessage(String.format("Failed to find habit with id (%s)", id));
+
+            ErrorResponse error = new ErrorResponse();
+            error.setStatus("error");
+            error.setError(errorDetail);
+
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
 
-        URI uriLocation = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
-                .toUri();
+        SuccessResponse<Habit> successResponse = new SuccessResponse();
+        successResponse.setSuccessStatus();
+        successResponse.setData(outHabit);
+        successResponse.setMessage("Habit Object was returned successfully.");
 
-        return ResponseEntity
-                .created(uriLocation)
-                .body(outHabit);
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
 
@@ -60,28 +66,32 @@ public class HabitController {
             @RequestParam String name,
             @RequestParam String comments,
             @RequestParam int start) {
-        Habit newHabit = habitService.addNewHabit(id, name, comments, start);
 
+        Habit newHabit = habitService.addNewHabit(id, name, comments, start);
         if (newHabit.IsEmpty()) {
-            String responseBody = String.format(
+
+            ErrorResponse.ErrorDetail errorDetail = new ErrorResponse.ErrorDetail();
+            errorDetail.setCode(404);
+            errorDetail.setMessage(String.format(
                     "Failed to create the new habit with id: %s, name: %s, comments: %s, start %s",
                     id,
                     name,
                     comments,
-                    start);
+                    start));
 
-            return ResponseEntity
-                    .badRequest()
-                    .body(responseBody);
+            ErrorResponse error = new ErrorResponse();
+            error.setStatus("error");
+            error.setError(errorDetail);
+
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         } else {
-            URI uriLocation = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(id)
-                    .toUri();
 
-            return ResponseEntity
-                    .created(uriLocation)
-                    .body(newHabit);
+            SuccessResponse<Habit> successResponse = new SuccessResponse();
+            successResponse.setSuccessStatus();
+            successResponse.setData(newHabit);
+            successResponse.setMessage("Sucessfully added a new habit with the data found in the data object.");
+
+            return new ResponseEntity<>(successResponse, HttpStatus.OK);
         }
     }
 
@@ -90,14 +100,29 @@ public class HabitController {
     // Removes a habit entry from the SQL database based on habit id.
     // --------------------------------------------------------------
     @DeleteMapping("/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Object> deleteHabit(@RequestParam String id) {
         if (habitService.deleteHabit(id)) {
-            return ResponseEntity
-                    .ok("Delete Succeeded.");
+            SuccessResponse<Object> successResponse = new SuccessResponse();
+            successResponse.setSuccessStatus();
+            successResponse.setData("");
+            successResponse.setMessage(String.format(
+                    "Sucessfully deleted habit with id: %s",
+                    id));
+
+            return new ResponseEntity<>(successResponse, HttpStatus.OK);
         } else {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Failed to delete habit with the id: " + id + ".");
+            ErrorResponse.ErrorDetail errorDetail = new ErrorResponse.ErrorDetail();
+            errorDetail.setCode(404);
+            errorDetail.setMessage(String.format(
+                    "Failed to delete habit with the id:  %s",
+                    id));
+
+            ErrorResponse error = new ErrorResponse();
+            error.setStatus("error");
+            error.setError(errorDetail);
+
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -105,15 +130,30 @@ public class HabitController {
     // --------------------------------------------------------------
     // Resets the habit's start time to the current unix time.
     // --------------------------------------------------------------
-    @PutMapping("/")
+    @PutMapping("/reset")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> putResetHabitById(@RequestParam String id) {
         if (habitService.resetHabitStartById(id)) {
-            return ResponseEntity
-                    .ok("Reset Succeeded.");
+            SuccessResponse<Object> successResponse = new SuccessResponse();
+            successResponse.setSuccessStatus();
+            successResponse.setData("");
+            successResponse.setMessage(String.format(
+                    "Sucessfully reset habit with id: %s",
+                    id));
+
+            return new ResponseEntity<>(successResponse, HttpStatus.OK);
         } else {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Failed to reset habit with the id: " + id + ".");
+            ErrorResponse.ErrorDetail errorDetail = new ErrorResponse.ErrorDetail();
+            errorDetail.setCode(404);
+            errorDetail.setMessage(String.format(
+                    "Failed to reset habit with the id:  %s",
+                    id));
+
+            ErrorResponse error = new ErrorResponse();
+            error.setStatus("error");
+            error.setError(errorDetail);
+
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -121,19 +161,34 @@ public class HabitController {
     // --------------------------------------------------------------
     // Edit the habit's name, comments, and start time by ID.
     // --------------------------------------------------------------
-    @PutMapping("/")
+    @PutMapping("/edit")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> putEditHabitById(
             @RequestParam String id,
             @RequestParam String name,
             @RequestParam String comments,
             @RequestParam int start) {
         if (habitService.editHabitStartById(id, name, comments, start)) {
-            return ResponseEntity
-                    .ok("Reset Succeeded.");
+            SuccessResponse<Object> successResponse = new SuccessResponse();
+            successResponse.setSuccessStatus();
+            successResponse.setData("");
+            successResponse.setMessage(String.format(
+                    "Sucessfully edited habit with id: %s",
+                    id));
+
+            return new ResponseEntity<>(successResponse, HttpStatus.OK);
         } else {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Failed to reset habit with the id: " + id + ".");
+            ErrorResponse.ErrorDetail errorDetail = new ErrorResponse.ErrorDetail();
+            errorDetail.setCode(404);
+            errorDetail.setMessage(String.format(
+                    "Failed to edit habit with the id:  %s",
+                    id));
+
+            ErrorResponse error = new ErrorResponse();
+            error.setStatus("error");
+            error.setError(errorDetail);
+
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.habittrackers.service;
 
-import com.habittrackers.model.Habit;
+import com.habittrackers.model.habit.Habit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

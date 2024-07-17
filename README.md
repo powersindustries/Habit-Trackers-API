@@ -29,11 +29,60 @@ public class Habit {
 
 
 ### Current Endpoints
-- Get existing Habit by ID.
-- Add new Habit.
-- Delete existing habit.
-- Restart an existing habit's start time.
-- Edit an existing habit's information (Name, Comments, Start Date).
+#### Get existing Habit by ID.
+```json
+{
+  "status": "success",
+  "data": {
+    "id": "sample_id",
+    "name": "sample name",
+    "comments": "sameple comment",
+    "start": 12345
+  },
+  "message": "Habit Object was returned successfully."
+}
+```
+
+#### Add new Habit.
+```json
+{
+  "status": "success",
+  "data": {
+    "id": 1355705334,
+    "name": "sample name",
+    "comments": "sameple comment",
+    "start": 12345
+  },
+  "message": "Sucessfully added a new habit with the data found in the data object."
+}
+```
+
+#### Delete existing habit.
+```json
+{
+    "status": "success",
+    "data": "",
+    "message": "Sucessfully deleted habit with id: 123"
+}
+```
+
+#### Restart an existing habit's start time.
+```json
+{
+  "status": "success",
+  "data": "",
+  "message": "Sucessfully reset habit with id: 123"
+}
+```
+
+#### Edit an existing habit's information (Name, Comments, Start Date).
+```json
+{
+  "status": "success",
+  "data": "",
+  "message": "Sucessfully edited habit with id: 123"
+}
+```
 
 
 ### About
