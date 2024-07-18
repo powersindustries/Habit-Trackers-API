@@ -1,5 +1,7 @@
 package com.habittrackers.service;
 
+import com.habittrackers.config.SqlConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -10,16 +12,22 @@ import java.sql.Statement;
 @Service
 public class SqlService {
 
-    private String connectionURL = "CONNECTION URL";
-    private String userId = "USER NAME";
-    private String password = "PASSWORD";
+    private SqlConfig sqlConfig;
     private Connection connection;
     private Statement statement;
 
-    public SqlService() {
+    @Autowired
+    public SqlService(SqlConfig sqlConfig) {
+        this.sqlConfig = sqlConfig;
+
         try {
-            connection = DriverManager.getConnection(connectionURL, userId, password);
+            connection = DriverManager.getConnection(
+                    sqlConfig.getConnectionURL(),
+                    sqlConfig.getUserId(),
+                    sqlConfig.getPassword());
+
             statement = connection.createStatement();
+
         } catch (SQLException ex) {
             System.out.println("ERROR: SQL connection failed with error: " + ex.getMessage());
         }
