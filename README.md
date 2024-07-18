@@ -36,7 +36,7 @@ public class Habit {
   "data": {
     "id": "sample_id",
     "name": "sample name",
-    "comments": "sameple comment",
+    "comments": "sample comment",
     "start": 12345
   },
   "message": "Habit Object was returned successfully."
@@ -50,7 +50,7 @@ public class Habit {
   "data": {
     "id": 1355705334,
     "name": "sample name",
-    "comments": "sameple comment",
+    "comments": "sample comment",
     "start": 12345
   },
   "message": "Sucessfully added a new habit with the data found in the data object."
@@ -70,8 +70,13 @@ public class Habit {
 ```json
 {
   "status": "success",
-  "data": "",
-  "message": "Sucessfully reset habit with id: 123"
+  "data": {
+    "id": 1355705334,
+    "name": "sample name",
+    "comments": "sample comment",
+    "start": 12345
+  },
+  "message": "Sucessfully reset habit with id: 123. Reset habit data is found in the data field of response."
 }
 ```
 
@@ -79,8 +84,13 @@ public class Habit {
 ```json
 {
   "status": "success",
-  "data": "",
-  "message": "Sucessfully edited habit with id: 123"
+  "data": {
+    "id": 1355705334,
+    "name": "sample name",
+    "comments": "sample comment",
+    "start": 12345
+  },
+  "message": "Sucessfully edited habit with id: 123. Edited habit data is found in the data field of response."
 }
 ```
 

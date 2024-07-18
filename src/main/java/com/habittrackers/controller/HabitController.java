@@ -133,28 +133,33 @@ public class HabitController {
     @PutMapping("/reset")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> putResetHabitById(@RequestParam String id) {
+
         if (habitService.resetHabitStartById(id)) {
-            SuccessResponse<Object> successResponse = new SuccessResponse();
-            successResponse.setSuccessStatus();
-            successResponse.setData("");
-            successResponse.setMessage(String.format(
-                    "Sucessfully reset habit with id: %s",
-                    id));
+            Habit resetHabit = habitService.getHabitById(id);
+            if (!resetHabit.IsEmpty()) {
 
-            return new ResponseEntity<>(successResponse, HttpStatus.OK);
-        } else {
-            ErrorResponse.ErrorDetail errorDetail = new ErrorResponse.ErrorDetail();
-            errorDetail.setCode(404);
-            errorDetail.setMessage(String.format(
-                    "Failed to reset habit with the id:  %s",
-                    id));
+                SuccessResponse<Habit> successResponse = new SuccessResponse();
+                successResponse.setSuccessStatus();
+                successResponse.setData(resetHabit);
+                successResponse.setMessage(String.format(
+                        "Sucessfully reset habit with id: %s. Reset habit data is found in the data field of response.",
+                        id));
 
-            ErrorResponse error = new ErrorResponse();
-            error.setStatus("error");
-            error.setError(errorDetail);
-
-            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(successResponse, HttpStatus.OK);
+            }
         }
+
+        ErrorResponse.ErrorDetail errorDetail = new ErrorResponse.ErrorDetail();
+        errorDetail.setCode(404);
+        errorDetail.setMessage(String.format(
+                "Failed to reset habit with the id:  %s",
+                id));
+
+        ErrorResponse error = new ErrorResponse();
+        error.setStatus("error");
+        error.setError(errorDetail);
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -168,27 +173,32 @@ public class HabitController {
             @RequestParam String name,
             @RequestParam String comments,
             @RequestParam int start) {
+
         if (habitService.editHabitStartById(id, name, comments, start)) {
-            SuccessResponse<Object> successResponse = new SuccessResponse();
-            successResponse.setSuccessStatus();
-            successResponse.setData("");
-            successResponse.setMessage(String.format(
-                    "Sucessfully edited habit with id: %s",
-                    id));
 
-            return new ResponseEntity<>(successResponse, HttpStatus.OK);
-        } else {
-            ErrorResponse.ErrorDetail errorDetail = new ErrorResponse.ErrorDetail();
-            errorDetail.setCode(404);
-            errorDetail.setMessage(String.format(
-                    "Failed to edit habit with the id:  %s",
-                    id));
+            Habit editedHabit = habitService.getHabitById(id);
+            if (!editedHabit.IsEmpty()) {
+                SuccessResponse<Habit> successResponse = new SuccessResponse();
+                successResponse.setSuccessStatus();
+                successResponse.setData(editedHabit);
+                successResponse.setMessage(String.format(
+                        "Sucessfully edited habit with id: %s. Edited habit data is found in the data field of response.",
+                        id));
 
-            ErrorResponse error = new ErrorResponse();
-            error.setStatus("error");
-            error.setError(errorDetail);
-
-            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(successResponse, HttpStatus.OK);
+            }
         }
+
+        ErrorResponse.ErrorDetail errorDetail = new ErrorResponse.ErrorDetail();
+        errorDetail.setCode(404);
+        errorDetail.setMessage(String.format(
+                "Failed to edit habit with the id:  %s",
+                id));
+
+        ErrorResponse error = new ErrorResponse();
+        error.setStatus("error");
+        error.setError(errorDetail);
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
